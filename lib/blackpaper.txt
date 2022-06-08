@@ -1,0 +1,59 @@
+Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          ElevatedButton(
+            onPressed: () async {
+              var result = await Process.run('./n.sh', [myController.text],
+                  runInShell: true);
+              setState(() => string = result.stdout);
+            },
+            child: const Text('Show neighbors'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              var result = await Process.run('./o.sh', [myController.text],
+                  runInShell: true);
+              setState(() => string = result.stdout);
+            },
+            child: const Text('Show originators'),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: const Text("Enter MAC-address:"),
+                      content: TextField(onSubmitted: (value) async {
+                        input.add(value);
+                        var result = await Process.run(
+                            './tp.sh', [myController.text, "$input"],
+                            runInShell: true);
+                        input.clear();
+                        setState(() => string = result.stdout);
+                      }),
+                    );
+                  });
+            },
+            child: const Text('Throughput meter'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              var result = await Process.run(
+                  './tcpdump.sh', [myController.text],
+                  runInShell: true);
+              setState(() => string = result.stdout);
+            },
+            child: const Text('TCP dump'),
+          ),
+          Center(
+            child: Text(
+              string,
+              style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.white,
+                  backgroundColor: Colors.black),
+            ),
+          ),
+        ],
+      ),
